@@ -10,7 +10,7 @@
     "express": "^4.18.2",
     "node-fetch": "^2.7.0",
     "redis": "^4.6.10",
-    "pushbullet": "^3.0.0"
+    "pushbullet": "^2.0.0"
   },
   "engines": {
     "node": "18.x"
