@@ -1,0 +1,26 @@
+name: Keep Render app awake
+
+on:
+  schedule:
+    - cron: "*/6 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping uygulama
+        run: |
+          APP_URL="https://agent-brawl-stars.onrender.com/"
+          echo "Pinging $APP_URL"
+          http_status=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL" || echo "000")
+          echo "HTTP status: $http_status"
+          if [ "$http_status" = "000" ]; then
+            echo "Ping başarısız (network hatası)."
+            exit 1
+          fi
+          if [ "$http_status" -ge 400 ]; then
+            echo "Uygulama HTTP $http_status döndü; kontrol edin."
+            exit 1
+          fi
+          echo "Ping başarılı."
