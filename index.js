@@ -4,15 +4,15 @@ const redis = require('redis');
 const Pushbullet = require('pushbullet');
 
 const PORT = process.env.PORT || 10000;
-const PLAYER_TAG = '#2LQPVY99QU';
+const PLAYER_TAG = process.env.PLAYER_TAG;
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 const brawlStarsApiKey = process.env.BRAWL_STARS_API_KEY;
 const pushbulletApiKey = process.env.PUSHBULLET_API_KEY;
 const redisUrl = process.env.REDIS_URL;
 
-if (!brawlStarsApiKey || !pushbulletApiKey || !redisUrl) {
-  console.error('Gerekli ortam değişkenleri ayarlanmamış! (BRAWL_STARS_API_KEY, PUSHBULLET_API_KEY, REDIS_URL)');
+if (!brawlStarsApiKey || !pushbulletApiKey || !redisUrl || !PLAYER_TAG) {
+  console.error('Gerekli ortam değişkenleri ayarlanmamış! (BRAWL_STARS_API_KEY, PUSHBULLET_API_KEY, REDIS_URL, PLAYER_TAG)');
   process.exit(1);
 }
 
@@ -20,7 +20,8 @@ const app = express();
 const pusher = new Pushbullet(pushbulletApiKey);
 const redisClient = redis.createClient({ url: redisUrl });
 
-const LAST_XP_KEY = `player:${PLAYER_TAG}:lastXP`;
+const normalizedTagForKey = PLAYER_TAG.replace(/#/g, '');
+const LAST_XP_KEY = `player:${normalizedTagForKey}:lastXP`;
 
 const checkPlayerXP = async () => {
   console.log(`${new Date().toISOString()} - Oyuncu verileri kontrol ediliyor...`);
